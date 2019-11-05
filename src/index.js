@@ -26,7 +26,6 @@ const checkDataTypeCompatibility = (params) => {
 module.exports = function openssl(params, callback = () => undefined) {
     const stdout = [];
     const stderr = [];
-    const dir = 'openssl/';
     let parameters = params
 
 
@@ -50,11 +49,9 @@ module.exports = function openssl(params, callback = () => undefined) {
     for (let i = 0; i <= parameters.length - 1; i++) {
         
         if (checkBufferObject(parameters[i])) {
-            if (!fs.existsSync(dir)) {
-                fs.mkdirSync(dir);
-            }
+           
 
-            const filename = dir + parameters[i].name
+            const filename = parameters[i].name
 
             fs.writeFileSync(filename, parameters[i].buffer, (err) => {
                 if (err) {
@@ -63,11 +60,11 @@ module.exports = function openssl(params, callback = () => undefined) {
             });
 
             parameters[i] = parameters[i].name
-            parameters[i] = dir + parameters[i];            
+            parameters[i] = parameters[i];            
         }
 
         if (checkCommandForIO(parameters[i]) && typeof parameters[i + 1] !== 'object') {
-            parameters[i + 1] = dir + parameters[i + 1];
+            parameters[i + 1] = parameters[i + 1];
         }
     }
 
@@ -83,7 +80,7 @@ module.exports = function openssl(params, callback = () => undefined) {
     });
 
     openSSLProcess.on('close', (code) => {
-        console.log(`OpenSSL process ends with code ${code}`)
+        // console.log(`OpenSSL process ends with code ${code}`)
         callback.call(null, stderr, stdout);
     });
 
